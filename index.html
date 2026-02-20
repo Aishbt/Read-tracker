@@ -66,6 +66,56 @@ em{color:#4E9468;font-style:italic}
 </style>
 </head>
 
+<canvas id="confettiCanvas"
+  style="position:fixed;inset:0;pointer-events:none;z-index:9999">
+</canvas>
+
+  <script>
+const canvas = document.getElementById("confettiCanvas");
+const ctx = canvas.getContext("2d");
+let confetti = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+function launchConfetti(){
+  confetti = [];
+  for(let i=0;i<80;i++){
+    confetti.push({
+      x: Math.random()*canvas.width,
+      y: -10,
+      vx: (Math.random()-0.5)*4,
+      vy: Math.random()*3+2,
+      r: Math.random()*6+4,
+      c: ["#8BBF9F","#F4C790","#FADADD","#D4C8F0","#FDE68A"]
+        [Math.floor(Math.random()*5)],
+      life: 0
+    });
+  }
+  requestAnimationFrame(drawConfetti);
+}
+
+function drawConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.vy+=0.05;
+    p.life++;
+    ctx.fillStyle=p.c;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  });
+  confetti = confetti.filter(p=>p.y<canvas.height && p.life<120);
+  if(confetti.length) requestAnimationFrame(drawConfetti);
+}
+</script>
+
 <body>
 <div class="page">
 
