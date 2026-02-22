@@ -187,13 +187,6 @@ function render(){
   document.getElementById("streak").textContent=streak>0?`🔥 ${streak} day${streak>1?"s":""}`:"🌿 0 days";
 }
 
-// 🔧 ONE-TIME BACKFILL — REMOVE AFTER IT WORKS
-(() => {
-  const data = load(TY, TM);
-  [17,18,19,20,21].forEach(d => data[d] = "done");
-  save(TY, TM, data);
-})();
-
 render();
 </script>
 </body>
