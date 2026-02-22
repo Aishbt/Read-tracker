@@ -212,15 +212,21 @@ function render(){
     const c=document.createElement("div");
     if(d>TD){
       c.className="d future";c.textContent=d;
-    }else if(d===TD){
-      c.className="d today";c.textContent=d;
-      c.onclick = () => {
-  data[d] = "done";
-  save(TY, TM, data);
-  launchConfetti();  
-  render();
-};
-    }else{
+    }else if(d === TD){
+  if(data[d] === "done"){
+    c.className = "d done";   // ✅ GREEN
+    c.textContent = d;
+  } else {
+    c.className = "d today"; // 🟡 YELLOW
+    c.textContent = d;
+    c.onclick = () => {
+      data[d] = "done";
+      save(TY, TM, data);
+      launchConfetti();      // 🎉
+      render();
+    };
+  }
+}else{
       c.className="d "+(data[d]==="done"?"done":"missed");
       c.textContent=d;
       if(data[d]==="done") done++; else missed++;
@@ -230,7 +236,15 @@ function render(){
 
   const growth=Math.max(0,done-missed);
   document.getElementById("plantEl").textContent=PLANTS[Math.min(growth,6)];
-  document.getElementById("streak").textContent=done?`🔥 ${done} days`:"🌿 0 days";
+ // 🔥 STREAK = consecutive days ending today
+let streak = 0;
+for(let i = TD; i >= 1; i--){
+  if(load(TY, TM)[i] === "done") streak++;
+  else break;
+}
+
+document.getElementById("streak").textContent =
+  streak > 0 ? `🔥 ${streak} day${streak > 1 ? "s" : ""}` : "🌿 0 days";
 }
 
 render();
