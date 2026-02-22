@@ -74,6 +74,18 @@ em{color:#4E9468;font-style:italic}
 const canvas = document.getElementById("confettiCanvas");
 const ctx = canvas.getContext("2d");
 let confetti = [];
+// 🔧 ONE-TIME BACKFILL (REMOVE AFTER USE)
+(() => {
+  const y = TY;
+  const m = TM;
+  const data = load(y, m);
+
+  [17,18,19,20,21].forEach(d => {
+    if(!data[d]) data[d] = "done";
+  });
+
+  save(y, m, data);
+})();
 
 function resizeCanvas(){
   canvas.width = window.innerWidth;
