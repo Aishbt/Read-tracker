@@ -1,72 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>Read & Grow</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4E9468">
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#4E9468" />
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg1:#ffffff;
+  --bg2:#faf7f2;
+  --card:#ffffffdd;
+  --text:#1a1714;
+  --soft:#5c5650;
+}
+
 body{
-  font-family:-apple-system,Helvetica,Arial,sans-serif;
-  background:#fff;color:#1A1714;
-  min-height:100vh;padding-bottom:90px
+  font-family:'Inter',sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%, #f4f9f6 0%, transparent 40%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  min-height:100vh;
 }
-.page{max-width:390px;margin:0 auto;padding:44px 22px 0}
-.hdr{display:flex;justify-content:space-between;margin-bottom:26px}
-h1{font-size:1.85rem;font-weight:700}
-em{color:#4E9468;font-style:italic}
+
+.page{max-width:390px;margin:auto;padding:44px 22px 90px}
+
+.hdr{display:flex;justify-content:space-between;align-items:center}
+
+h1{
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;
+}
+em{color:#4e9468}
+
 .streak{
-  background:#FEF6EA;border:1.5px solid #F0D090;
-  border-radius:100px;padding:7px 13px;
-  font-size:.7rem;font-weight:700;color:#9A6E20
+  background:#ffecc2;
+  padding:7px 14px;
+  border-radius:999px;
+  font-size:.7rem;
+  font-weight:700;
 }
-.plant-wrap{text-align:center;margin-bottom:28px}
+
+.plant-wrap{text-align:center;margin:30px 0}
+
+.pot-scene{
+  position:relative;
+  width:140px;
+  height:160px;
+  margin:auto;
+}
+.pot-scene::before{
+  content:"";
+  position:absolute;
+  width:120px;height:120px;
+  background:radial-gradient(circle,#eaf5ec 0%,transparent 65%);
+  border-radius:50%;
+  top:-20px;left:50%;
+  transform:translateX(-50%);
+}
+
+#plantEl{
+  font-size:2.4rem;
+  position:relative;
+  z-index:2;
+}
+
 .plant-label{
-  font-size:.6rem;letter-spacing:1.2px;
-  text-transform:uppercase;color:#5C5650;margin-bottom:10px
+  font-size:.6rem;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  color:var(--soft);
 }
+
 .plant-msg{
-  font-size:.72rem;color:#5C5650;
-  font-style:italic;margin-top:6px
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-size:.72rem;
+  color:var(--soft);
 }
-.pot-scene{position:relative;width:140px;height:160px;margin:0 auto}
-#plantEl{position:absolute;bottom:34px;left:50%;transform:translateX(-50%)}
+
 .cal{
-  background:#fff;border-radius:18px;
-  padding:18px;box-shadow:0 2px 18px rgba(0,0,0,.05)
+  background:var(--card);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
 }
+
 .dowrow,.dgrid{display:grid;grid-template-columns:repeat(7,1fr)}
-.dow{font-size:.6rem;text-align:center;color:#888}
+.dow{text-align:center;font-size:.6rem;color:var(--soft)}
+
 .d{
-  aspect-ratio:1;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.78rem;font-weight:600
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  font-weight:600;
 }
-.future{background:#f6f4f1;color:#aaa}
-.missed{background:#eee;color:#777}
-.done{background:#d8f0e2;color:#1a5c38}
+
+.future{opacity:.3}
+.missed{background:#eee}
+.done{background:#d8f0e2}
 .today{
-  background:#fff5da;border:1.5px solid #f0ce88;
-  cursor:pointer;animation:pulse 2s infinite
+  background:#fff3d6;
+  cursor:pointer;
+  animation:pulse 2s infinite;
 }
+
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 2px #f0ce8840}
   50%{box-shadow:0 0 0 6px #f0ce8815}
 }
-.reminder{
-  margin-top:20px;
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.overlay.show{display:flex}
+
+.reveal{
+  background:#fff;
+  padding:36px;
+  border-radius:28px;
   text-align:center;
-  font-size:.7rem;
-  color:#5C5650
 }
 </style>
 </head>
 
 <body>
+
+<div class="overlay" id="overlay">
+  <div class="reveal">
+    <div id="revealPlant" style="font-size:3rem"></div>
+    <h2 id="revealName"></h2>
+    <p>You showed up every day 🌱</p>
+  </div>
+</div>
+
 <div class="page">
 
   <div class="hdr">
@@ -75,15 +158,12 @@ em{color:#4E9468;font-style:italic}
   </div>
 
   <div class="plant-wrap">
-    <div class="plant-label" id="label">mystery plant</div>
+    <div class="plant-label" id="plantLabel">something is growing…</div>
     <div class="pot-scene">
       <div id="plantEl">🌱</div>
-      <svg width="100" height="36" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%)">
-        <path d="M10 2h80l-8 32H18z" fill="#EAE0D5"/>
-      </svg>
     </div>
-    <div class="plant-msg" id="msg">
-      Read every day. Missed days weaken growth 🌧️
+    <div class="plant-msg" id="plantMsg">
+      Read every day. Missed days weaken growth.
     </div>
   </div>
 
@@ -95,96 +175,68 @@ em{color:#4E9468;font-style:italic}
     <div class="dgrid" id="grid"></div>
   </div>
 
-  <div class="reminder">
-    Daily reminder time<br>
-    <input type="time" id="reminderTime">
-  </div>
-
 </div>
 
 <script>
-/* SERVICE WORKER */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('service-worker.js');
-}
-
-/* NOTIFICATIONS */
-if("Notification" in window && Notification.permission==="default"){
-  Notification.requestPermission();
-}
-
-/* DATE */
-const N=new Date(),TY=N.getFullYear(),TM=N.getMonth(),TD=N.getDate();
+const N=new Date(),Y=N.getFullYear(),M=N.getMonth(),D=N.getDate();
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
 const fdow=(y,m)=>new Date(y,m,1).getDay();
+const key=(y,m)=>`rg_${y}_${m}`;
+const load=()=>JSON.parse(localStorage.getItem(key(Y,M))||"{}");
+const save=d=>localStorage.setItem(key(Y,M),JSON.stringify(d));
 
-/* STORAGE */
-const k=(y,m)=>`rg_${y}_${m}`;
-const load=(y,m)=>JSON.parse(localStorage.getItem(k(y,m))||'{}');
-const save=(y,m,d)=>localStorage.setItem(k(y,m),JSON.stringify(d));
+const pool=[
+  ["🪷",""],
+  ["🌾",""],
+  ["🍀",""],
+  ["🌺",""],
+  ["🌲",""],
+  ["🪴",""],
+  ["🌼",""],
+  ["🍃",""],
+  ["🌸",""],
+  ["🌻",""],
+  ["🌷",""],
+  ["🌹",""]
+];
 
-/* PLANTS */
-const PLANTS=['🌱','🌿','🌿','🌿','🌿','🌿','🌸'];
+const pick=pool[(Y*12+M)%pool.length];
 
-/* REMINDER */
-const rt=document.getElementById("reminderTime");
-const saved=localStorage.getItem("rg_reminder_time");
-if(saved) rt.value=saved;
-rt.onchange=()=>localStorage.setItem("rg_reminder_time",rt.value);
-
-setInterval(()=>{
-  if(Notification.permission!=="granted") return;
-  const t=localStorage.getItem("rg_reminder_time");
-  if(!t) return;
-  const [h,m]=t.split(":");
-  const n=new Date();
-  if(n.getHours()==h && n.getMinutes()==m){
-    const last=localStorage.getItem("rg_last_notify");
-    const today=new Date().toDateString();
-    if(last!==today){
-      new Notification("Read & Grow 🌱",{body:"10 minutes. Let your plant grow.",icon:"icon-192.png"});
-      localStorage.setItem("rg_last_notify",today);
-    }
-  }
-},60000);
-
-/* RENDER */
 function render(){
-  const data=load(TY,TM),days=dim(TY,TM);
-  const grid=document.getElementById("grid");
-  grid.innerHTML="";
-  let done=0,missed=0;
+ const data=load(),grid=document.getElementById("grid");
+ grid.innerHTML="";
+ let done=0,missed=0;
 
-  for(let i=0;i<fdow(TY,TM);i++)grid.appendChild(document.createElement("div"));
+ for(let i=0;i<fdow(Y,M);i++)grid.appendChild(document.createElement("div"));
 
-  for(let d=1;d<=days;d++){
-    const c=document.createElement("div");
-    if(d>TD){
-      c.className="d future";c.textContent=d;
-    }else if(d===TD){
-      if(data[d]==="done"){
-        c.className="d done";c.textContent=d;
-      } else {
-        c.className="d today";c.textContent=d;
-        c.onclick=()=>{
-          data[d]="done";save(TY,TM,data);render();
-        };
-      }
-    }else{
-      c.className="d "+(data[d]==="done"?"done":"missed");
-      c.textContent=d;
-      if(data[d]==="done")done++; else missed++;
+ for(let d=1;d<=dim(Y,M);d++){
+  const c=document.createElement("div");
+  if(d>D){c.className="d future";c.textContent=d}
+  else if(d===D){
+    if(data[d]==="done"){c.className="d done";c.textContent=d}
+    else{
+      c.className="d today";c.textContent=d;
+      c.onclick=()=>{data[d]="done";save(data);render()}
     }
-    grid.appendChild(c);
+  }else{
+    c.className="d "+(data[d]==="done"?"done":"missed");
+    c.textContent=d;
+    data[d]==="done"?done++:missed++;
   }
+  grid.appendChild(c);
+ }
 
-  const growth=Math.max(0,done-missed);
-  document.getElementById("plantEl").textContent=PLANTS[Math.min(growth,6)];
-  let streak=0;
-  for(let i=TD;i>=1;i--){
-    if(load(TY,TM)[i]==="done")streak++;else break;
-  }
-  document.getElementById("streak").textContent=streak>0?`🔥 ${streak} day${streak>1?"s":""}`:"🌿 0 days";
+ document.getElementById("plantEl").textContent=done>missed?"🌿":"🌱";
+
+ let streak=0;
+ for(let i=D;i>=1;i--){if(data[i]==="done")streak++;else break}
+ document.getElementById("streak").textContent=streak?`🔥 ${streak} days`:"🌿 0 days";
+
+ if(D===dim(Y,M)&&missed===0){
+   document.getElementById("overlay").classList.add("show");
+   document.getElementById("revealPlant").textContent=pick[0];
+   document.getElementById("revealName").textContent="";
+ }
 }
 
 render();
