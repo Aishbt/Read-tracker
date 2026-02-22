@@ -66,68 +66,6 @@ em{color:#4E9468;font-style:italic}
 </style>
 </head>
 
-<canvas id="confettiCanvas"
-  style="position:fixed;inset:0;pointer-events:none;z-index:9999">
-</canvas>
-
-  <script>
-const canvas = document.getElementById("confettiCanvas");
-const ctx = canvas.getContext("2d");
-let confetti = [];
-// 🔧 ONE-TIME BACKFILL (REMOVE AFTER USE)
-(() => {
-  const y = TY;
-  const m = TM;
-  const data = load(y, m);
-
-  [17,18,19,20,21].forEach(d => {
-    if(!data[d]) data[d] = "done";
-  });
-
-  save(y, m, data);
-})();
-
-function resizeCanvas(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-function launchConfetti(){
-  confetti = [];
-  for(let i=0;i<80;i++){
-    confetti.push({
-      x: Math.random()*canvas.width,
-      y: -10,
-      vx: (Math.random()-0.5)*4,
-      vy: Math.random()*3+2,
-      r: Math.random()*6+4,
-      c: ["#8BBF9F","#F4C790","#FADADD","#D4C8F0","#FDE68A"]
-        [Math.floor(Math.random()*5)],
-      life: 0
-    });
-  }
-  requestAnimationFrame(drawConfetti);
-}
-
-function drawConfetti(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  confetti.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-    p.vy+=0.05;
-    p.life++;
-    ctx.fillStyle=p.c;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-  });
-  confetti = confetti.filter(p=>p.y<canvas.height && p.life<120);
-  if(confetti.length) requestAnimationFrame(drawConfetti);
-}
-</script>
-
 <body>
 <div class="page">
 
@@ -192,7 +130,6 @@ const PLANTS=['🌱','🌿','🌿','🌿','🌿','🌿','🌸'];
 const rt=document.getElementById("reminderTime");
 const saved=localStorage.getItem("rg_reminder_time");
 if(saved) rt.value=saved;
-
 rt.onchange=()=>localStorage.setItem("rg_reminder_time",rt.value);
 
 setInterval(()=>{
@@ -224,39 +161,30 @@ function render(){
     const c=document.createElement("div");
     if(d>TD){
       c.className="d future";c.textContent=d;
-    }else if(d === TD){
-  if(data[d] === "done"){
-    c.className = "d done";   // ✅ GREEN
-    c.textContent = d;
-  } else {
-    c.className = "d today"; // 🟡 YELLOW
-    c.textContent = d;
-    c.onclick = () => {
-      data[d] = "done";
-      save(TY, TM, data);
-      launchConfetti();      // 🎉
-      render();
-    };
-  }
-}else{
+    }else if(d===TD){
+      if(data[d]==="done"){
+        c.className="d done";c.textContent=d;
+      } else {
+        c.className="d today";c.textContent=d;
+        c.onclick=()=>{
+          data[d]="done";save(TY,TM,data);render();
+        };
+      }
+    }else{
       c.className="d "+(data[d]==="done"?"done":"missed");
       c.textContent=d;
-      if(data[d]==="done") done++; else missed++;
+      if(data[d]==="done")done++; else missed++;
     }
     grid.appendChild(c);
   }
 
   const growth=Math.max(0,done-missed);
   document.getElementById("plantEl").textContent=PLANTS[Math.min(growth,6)];
- // 🔥 STREAK = consecutive days ending today
-let streak = 0;
-for(let i = TD; i >= 1; i--){
-  if(load(TY, TM)[i] === "done") streak++;
-  else break;
-}
-
-document.getElementById("streak").textContent =
-  streak > 0 ? `🔥 ${streak} day${streak > 1 ? "s" : ""}` : "🌿 0 days";
+  let streak=0;
+  for(let i=TD;i>=1;i--){
+    if(load(TY,TM)[i]==="done")streak++;else break;
+  }
+  document.getElementById("streak").textContent=streak>0?`🔥 ${streak} day${streak>1?"s":""}`:"🌿 0 days";
 }
 
 render();
