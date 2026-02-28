@@ -1,15 +1,15 @@
-const CACHE = "read-grow-v1";
-
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open(CACHE).then(c =>
-      c.addAll(["./","./index.html","./manifest.json"])
+    caches.open("readgrow-cache").then(cache =>
+      cache.addAll(["./", "./index.html"])
     )
   );
 });
 
 self.addEventListener("fetch", e => {
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
+    caches.match(e.request).then(response =>
+      response || fetch(e.request)
+    )
   );
 });
