@@ -3,9 +3,8 @@
   "short_name": "ReadGrow",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#FFFFFF",
+  "background_color": "#ffffff",
   "theme_color": "#4E9468",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
